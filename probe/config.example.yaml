@@ -1,0 +1,13 @@
+# Configuración de la sonda NetWatch
+interval_seconds: 15   # cada cuánto se mide todo
+samples: 5             # muestras por destino en cada ronda
+timeout_seconds: 2     # una muestra que tarda más cuenta como perdida
+
+targets:
+  # Sedes simuladas: contenedores con la red degradada por tc netem
+  - { name: valencia, host: site-valencia, port: 80, kind: simulada }
+  - { name: madrid,   host: site-madrid,   port: 80, kind: simulada }
+  - { name: satelite, host: site-satelite, port: 80, kind: simulada }
+  # Destinos reales de Internet
+  - { name: cloudflare-dns, host: 1.1.1.1, port: 443, kind: real }
+  - { name: google-dns,     host: 8.8.8.8, port: 443, kind: real }

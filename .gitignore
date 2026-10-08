@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+# Terraform (semana 2)
+.terraform/
+*.tfstate
+*.tfstate.*
+# Secretos
+.env
+*.secret

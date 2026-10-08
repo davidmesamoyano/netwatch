@@ -1,0 +1,33 @@
+# Entorno local de la semana 1: tres sedes simuladas, la sonda y Prometheus.
+# Arranque: docker compose -f deploy/compose/docker-compose.yml up --build
+name: netwatch
+
+x-site: &site
+  build: ../../sites
+  cap_add: [NET_ADMIN]
+  restart: unless-stopped
+
+services:
+  site-valencia:
+    <<: *site
+    environment: { SITE_NAME: valencia, DELAY: 5ms, JITTER: 1ms, LOSS: "0%" }
+
+  site-madrid:
+    <<: *site
+    environment: { SITE_NAME: madrid, DELAY: 20ms, JITTER: 3ms, LOSS: "0%" }
+
+  site-satelite:
+    <<: *site
+    environment: { SITE_NAME: satelite, DELAY: 600ms, JITTER: 50ms, LOSS: "2%" }
+
+  probe:
+    build: ../../probe
+    depends_on: [site-valencia, site-madrid, site-satelite]
+    ports: ["8000:8000"]
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+    depends_on: [probe]
