@@ -13,4 +13,8 @@ COPY config.example.yaml config.yaml
 USER netwatch
 ENV NETWATCH_CONFIG=/app/config.yaml NETWATCH_PORT=8000 PYTHONUNBUFFERED=1
 EXPOSE 8000
+
+# Docker comprueba cada 30 s que la sonda responde en /healthz (python-slim no trae curl)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=2)" || exit 1
 CMD ["python", "-m", "netwatch.main"]
